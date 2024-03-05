@@ -9,7 +9,7 @@ contract GameCharacter {
         health = 100;
     }
     
-    function takeDamage(uint amount) public {
+    function takeDamage(uint amount) public virtual {
         if (health < amount) {
             health = 0;
         } else {

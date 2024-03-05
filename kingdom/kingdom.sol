@@ -9,22 +9,41 @@ contract DebtManagement {
         uint taverns;
         uint brothels;
         uint knights;
+        uint lastCointime;
     }
+
+    uint public constant COINS_PER_PERIOD = 10; 
+    uint public constant PERIOD = 1 days; 
 
     mapping(address => KingdomData) public kingdoms;
 
     event Defeated(address _victor, address _loser);
 
     function addPlayer(address _player) public {
-        kingdoms[_player] = new KingdomData(0, 0, 0, 0, 0, 0);
+        kingdoms[_player] = KingdomData({
+        debt: 0,
+        wood: 0,
+        coins: 0,
+        stone: 0,
+        taverns: 0,
+        brothels: 0,
+        knights: 0,
+        lastCointime: block.timestamp
+    });
     }
 
-    function borrow(address _player, int _amount) public {
-        kingdoms[_player].coins += _amount; 
-        kingdoms[_player].coins += _amount;
+    function borrow(address _player, uint _amount) public {
+        kingdoms[_player].coins = _amount; 
+        kingdoms[_player].debt += _amount;
     }
 
-    function repayDebt(address _player, int _amount) public {
+    function awardCoins(address _player) public {
+        require(block.timestamp >= kingdoms[_player].lastCointime + PERIOD, "It's not time yet");
+        kingdoms[_player].coins += COINS_PER_PERIOD * (9 * kingdoms[_player].brothels + 4 * kingdoms[_player].taverns);
+        kingdoms[_player].lastCointime = block.timestamp; 
+    }
+
+    function repayDebt(address _player, uint _amount) public {
         require(kingdoms[_player].coins >= _amount, "not enough coins to repay");
         kingdoms[_player].debt -= _amount;
         if (kingdoms[_player].debt < 0) {
@@ -32,17 +51,17 @@ contract DebtManagement {
         }
     }
 
-    function buildTavern(address _player, int _amount) public {
-        require(kingdoms[_player].coins >= 100 ** (kingdoms[_player].tavern), "not enough coins");
+    function buildTavern(address _player, uint _amount) public {
+        require(kingdoms[_player].coins >= 100 ** (kingdoms[_player].taverns), "not enough coins");
         kingdoms[_player].taverns += 1;
     }
 
-    function buildBrothel(address _player, int _amount) public {
-        require(kingdoms[_player].coins >= 255 ** (kingdoms[_player].brothel), "not enough coins");
+    function buildBrothel(address _player, uint _amount) public {
+        require(kingdoms[_player].coins >= 255 ** (kingdoms[_player].brothels), "not enough coins");
         kingdoms[_player].brothels += 1;
     }
 
-    function hireKnight(address _player, int _amount) public {
+    function hireKnight(address _player, uint _amount) public {
         require(kingdoms[_player].coins >= 127 ** (kingdoms[_player].knights), "not enough coins");
         kingdoms[_player].knights += 1;
     }

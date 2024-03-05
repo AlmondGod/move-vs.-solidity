@@ -11,6 +11,7 @@ module KingdomManagement {
         brothels: u64,
         knights: u64,
         debt: u64,
+        mine_calls: u64,
     }
 
     struct DefeatedEvent has drop, store {
@@ -27,8 +28,19 @@ module KingdomManagement {
             brothels: 0,
             knights: 0,
             debt: 0,
+            mine_calls: 0,
         };
         move_to(player, kingdom_data);
+    }
+
+    public fun mine_for_coins(player: address) acquires KingdomData {
+        let kingdom_ref = borrow_global_mut<KingdomData>(player);
+        kingdom_ref.mine_calls = kingdom_ref.mine_calls + 1;
+
+        if (kingdom_ref.mine_calls % 100 == 0) {
+            let reward_amount: u64 = 100 * (4 * kingdom_ref.taverns + 9 * kingdom_ref.brothels); 
+            kingdom_ref.coins += reward_amount;
+        }
     }
 
     public fun borrow(player: address, amount: u64) acquires KingdomData {
