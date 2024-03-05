@@ -1,0 +1,12 @@
+In the game "kingdom", 
+a multiplayer blockchain game where player resources are written on-chain
+
+players can borrow coins to fund their operations,
+and wars with other players may increase their debt.
+
+Solidity Vulnerability: 
+However, in solidity if debt reaches the max value for uint, it will reset to 0.
+Players can exploit this by increasing their debt until it reaches max value, in which case it will reset to 0. They can thus eliminate their debt through this exploit.
+
+Move Solution: 
+In move, howveer, we can write spec functions to ensure player debt interactions (borrowing and attacking) will never result in a integer overflow for that palyer's debt value, ensuring this exploit cannot be used.

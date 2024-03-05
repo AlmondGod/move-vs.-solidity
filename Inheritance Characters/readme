@@ -1,0 +1,8 @@
+Here, we see two examples of inheritance and function visibility within blockchain games, through solidity and move.
+We aren't dealing with a specific vulnerability in this case, but rather showcase the method
+by which move has the same functioanlities as solidity.
+In solidity, we use typical inheritance and function overriding
+Move supports these same functionalities through its version of inheritance as well. We simply
+'use' a module located at user 0x1's address, and by doing so gain the inherited functions of this module.
+In move, the original functions can only be altered from within the module they were instantiated, which
+adds an extra layer of security for module developers.
