@@ -8,7 +8,7 @@ module KingdomManagement {
         coins: u64,
         stone: u64,
         taverns: u64,
-        brothels: u64,
+        bakeries: u64,
         knights: u64,
         debt: u64,
         mine_calls: u64,
@@ -25,7 +25,7 @@ module KingdomManagement {
             coins: 0,
             stone: 0,
             taverns: 0,
-            brothels: 0,
+            bakeries: 0,
             knights: 0,
             debt: 0,
             mine_calls: 0,
@@ -38,7 +38,7 @@ module KingdomManagement {
         kingdom_ref.mine_calls = kingdom_ref.mine_calls + 1;
 
         if (kingdom_ref.mine_calls % 100 == 0) {
-            let reward_amount: u64 = 100 * (4 * kingdom_ref.taverns + 9 * kingdom_ref.brothels); 
+            let reward_amount: u64 = 100 * (4 * kingdom_ref.taverns + 9 * kingdom_ref.bakeries); // Define the reward amount as per your game's economy
             kingdom_ref.coins += reward_amount;
         }
     }
@@ -65,14 +65,14 @@ module KingdomManagement {
             attacker_data.debt += debt_increase;
             attacker_data.knights = 0;
             attacker_data.taverns = attacker_data.taverns / 2;
-            attacker_data.brothels = 0;
+            attacker_data.bakeries = 0;
             emit_defeated_event(defender_addr, attacker_addr);
         } else {
             let debt_increase = attacker_data.debt + (1000 * (attacker_data.knights - defender_data.knights));
             defender_data.debt += debt_increase;
             defender_data.knights = 0;
             defender_data.taverns = defender_data.taverns / 2;
-            defender_data.brothels = 0;
+            defender_data.bakeries = 0;
             emit_defeated_event(attacker_addr, defender_addr);
         }
     }
@@ -107,17 +107,17 @@ module KingdomManagement {
         requires 100 ** kingdom_ref.taverns <= MAX_U64;
     }
 
-    public fun buildBrothel(player: address) acquires KingdomData {
+    public fun buildBakery(player: address) acquires KingdomData {
         let kingdom_ref = borrow_global_mut<KingdomData>(player);
-        assert!(kingdom_ref.coins >= 255 ** kingdom_ref.brothels, 1); 
-        kingdom_ref.brothels= kingdom_ref.brothels + 1;
-        kingdom_ref.coins -= 255 ** kingdom_ref.brothels;
+        assert!(kingdom_ref.coins >= 255 ** kingdom_ref.bakeries, 1); 
+        kingdom_ref.bakeries= kingdom_ref.bakeries + 1;
+        kingdom_ref.coins -= 255 ** kingdom_ref.bakeries;
     }
 
     spec borrow(player: address, amount: u64) acquires KingdomData {
         let kingdom_ref = borrow_global_mut<KingdomData>(player);
-        aborts_if 255 ** kingdom_ref.brothels > MAX_U64;
-        requires 255 ** kingdom_ref.brothels <= MAX_U64;
+        aborts_if 255 ** kingdom_ref.bakeries > MAX_U64;
+        requires 255 ** kingdom_ref.bakeries <= MAX_U64;
     }
 
     public fun hireKnight(player: address) acquires KingdomData {

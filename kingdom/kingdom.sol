@@ -7,7 +7,7 @@ contract DebtManagement {
         uint coins;
         uint stone;
         uint taverns;
-        uint brothels;
+        uint bakeries;
         uint knights;
         uint lastCointime;
     }
@@ -26,7 +26,7 @@ contract DebtManagement {
         coins: 0,
         stone: 0,
         taverns: 0,
-        brothels: 0,
+        bakeries: 0,
         knights: 0,
         lastCointime: block.timestamp
     });
@@ -39,7 +39,7 @@ contract DebtManagement {
 
     function awardCoins(address _player) public {
         require(block.timestamp >= kingdoms[_player].lastCointime + PERIOD, "It's not time yet");
-        kingdoms[_player].coins += COINS_PER_PERIOD * (9 * kingdoms[_player].brothels + 4 * kingdoms[_player].taverns);
+        kingdoms[_player].coins += COINS_PER_PERIOD * (9 * kingdoms[_player].bakeries + 4 * kingdoms[_player].taverns);
         kingdoms[_player].lastCointime = block.timestamp; 
     }
 
@@ -56,9 +56,9 @@ contract DebtManagement {
         kingdoms[_player].taverns += 1;
     }
 
-    function buildBrothel(address _player, uint _amount) public {
-        require(kingdoms[_player].coins >= 255 ** (kingdoms[_player].brothels), "not enough coins");
-        kingdoms[_player].brothels += 1;
+    function buildBakery(address _player, uint _amount) public {
+        require(kingdoms[_player].coins >= 255 ** (kingdoms[_player].bakeries), "not enough coins");
+        kingdoms[_player].bakeries += 1;
     }
 
     function hireKnight(address _player, uint _amount) public {
@@ -71,14 +71,14 @@ contract DebtManagement {
             kingdoms[_player].debt += kingdoms[_opponent].debt + (1000 * (kingdoms[_opponent].knights - kingdoms[_player].knights));
             kingdoms[_player].knights = 0;
             kingdoms[_player].taverns /= 2;
-            kingdoms[_player].brothels = 0;
+            kingdoms[_player].bakeries = 0;
             emit Defeated(_opponent, _player);
         }
         else {
             kingdoms[_opponent].debt += kingdoms[_player].debt + (1000 * (kingdoms[_player].knights - kingdoms[_opponent].knights));
             kingdoms[_opponent].knights = 0;
             kingdoms[_opponent].taverns /= 2;
-            kingdoms[_opponent].brothels = 0;
+            kingdoms[_opponent].bakeries = 0;
             emit Defeated(_player, _opponent);
         }
     }
